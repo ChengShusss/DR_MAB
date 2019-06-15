@@ -74,7 +74,7 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 		userL[i].set_userPower(powerDis[i])
 		userL[i].set_userObserProb(prob_c)
 		#print(i, ":", userL[i].realProb, ",", userL[i].power)
-	userL.sort(key=usercmp, reverse=True)
+	#userL.sort(key=usercmp, reverse=True)
 	return userL
 	
 def get_userInfo(userL):

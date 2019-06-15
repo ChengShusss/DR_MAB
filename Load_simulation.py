@@ -18,5 +18,4 @@ def loadSimu(userL, signalL):
 				feedBack[i] = 1
 			else:
 				optOut[i] = 1
-	print("Chosen User:", np.sum(signalL),"Stayed User:", np.sum(feedBack),"Optout User:", np.sum(optOut))
 	return realReduction, optOut, feedBack
