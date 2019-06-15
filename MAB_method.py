@@ -4,17 +4,50 @@ __author__ = 'S.CHENG'
 from user import *
 import numpy as np
 
-def riskAverse(userL, target):
+def riskAverse(userL, target, c1, c2, k):
+	#power.*(p - c1 *power.* p .* (1-p)) + c2.*sqrt(2*log(k)./(n+1))
 	signal = [0]*len(userL)
-	pass
+	indexList = []
+	expReduc = 0
+	for i in range(len(userL)):
+		T = userL[i].get_userChosenTimes()
+		p = userL[i].get_userObserProb()
+		power   = userL[i].get_userPower()
+		index = power*(p - c1*power*p*(1-p)) + c2*np.sqrt(2*np.log(k)/(T+1)) 
+		indexList.append([i, index, power*p, power, p])
+	indexList.sort(key=takeIndex, reverse=True)
+	#print(indexList[0:5])
+	for i in range(len(userL)):
+		if(userL[indexList[i][0]].get_userState() >= 0):
+			expReduc += indexList[i][2]
+			signal[indexList[i][0]] = 1
+			if (expReduc >= target):
+				#print("Target:", target, "ExpReduc:", expReduc)
+				break
+	#print(expReduc)
 	return signal
 
 def CUCBAVG(userL, target):
 	signal = [0]*len(userL)
-	pass
+	indexList = []
+	expReduc = 0
+	for i in range(len(userL)):
+		index = userL[i].get_userObserProb() #to be calculated
+		indexList.append([i, index])
+	indexList.sort(key=takeIndex, reverse=True)
+	for i in range(len(userL)):
+		expReduc += indexList[i][1]
+		signal[indexList[i][0]] = 1
+		if (expReduc >= target):
+			break
 	return signal
 
-def conveMethod(userL, target):
+def convenMethod(userL, target, meanPower):
 	signal = [0]*len(userL)
-	pass
+	chosenUserList = np.random.choice(len(userL), int(target/meanPower))
+	for i in range(len(chosenUserList)):
+		signal[chosenUserList[i]] = 1
 	return signal
+
+def takeIndex(element):
+	return element[1]

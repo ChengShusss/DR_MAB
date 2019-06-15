@@ -2,7 +2,6 @@
 __author__ = 'S.CHENG'
 import numpy as np
 
-
 class user:
 	realProb = 0.0
 	obserProb = 0.0
@@ -24,7 +23,7 @@ class user:
 	def set_userObserProb(self, oP):
 		self.obserProb = oP
 
-	def set_userChoseTimes(self, cT):
+	def set_userChosenTimes(self, cT):
 		self.chosenTimes = cT
 
 	def set_userState(self, s):
@@ -39,7 +38,7 @@ class user:
 	def get_userObserProb(self):
 		return self.obserProb
 
-	def get_userChoseTimes(self):
+	def get_userChosenTimes(self):
 		return self.chosenTimes
 
 	def get_userState(self):
@@ -48,11 +47,13 @@ class user:
 	def get_userPower(self):
 		return self.power
 
-	def display():
-		print("UserInfo:\nrealProb:", self.realProb, "obserProb:", self.obserProb, 
+	def get_userExpDec(self):
+		return self.power*self.obserProb
+
+	def display(self):
+		print("userL[i]nfo:\nrealProb:", self.realProb, "obserProb:", self.obserProb, 
 				"\nchosenTimes:", self.chosenTimes,	"state:", self.state,
 				"\npower:", self.power)
-
 
 def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 	#generate user probablity and power distribution
@@ -73,6 +74,7 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 		userL[i].set_userPower(powerDis[i])
 		userL[i].set_userObserProb(prob_c)
 		#print(i, ":", userL[i].realProb, ",", userL[i].power)
+	userL.sort(key=usercmp, reverse=True)
 	return userL
 	
 def get_userInfo(userL):
@@ -87,14 +89,38 @@ def get_allUserObs(userL, ObsL):
 	for i in range(len(userL)):
 		ObsL[i][1] = userL[i].get_userObserProb()
 
-def userUpdata(userI, feedback, optDelay, maxT, tempDelay):
-	if(feedback == 0):
-		userI.set_userState(optDelay)
-		userObs = userI.get_userObserProb()*(userI.get_userChoseTimes()/(userI.get_userChoseTimes()+1))
-		userI.set_userObserProb(userObs)
-	elif(feedback == 1):
-		userObs = (userI.get_userObserProb()*userI.get_userChoseTimes()+1)/(userI.get_userChoseTimes()+1)
-		userI.set_userObserProb(userObs)
-		if(userI.get_userState() > maxT):
-			userI.set_userState(tempDelay)	
-	userI.set_userChoseTimes(UserI.get_userChoseTimes()+1)
+def get_allUserReal(userL, RealL):
+	for i in range(len(userL)):
+		RealL[i][1] = userL[i].get_userRealProb()
+
+def userUpdata(userL, signal, feedback, optDelay, maxT, tempDelay):
+	#print(feedback)
+	for i in range(len(userL)):
+		if(signal[i] == 1):
+			T = float(userL[i].get_userChosenTimes())
+			p = float(userL[i].get_userObserProb())
+			if(feedback[i] == 0):
+				userL[i].set_userState(optDelay)
+				if(userL[i].get_userChosenTimes() > 0):
+					userObs = p*T/(T+1)
+					userL[i].set_userObserProb(userObs)
+				else:userL[i].set_userObserProb(0.0)		
+			elif(feedback[i] == 1):
+				if(userL[i].get_userChosenTimes() > 0):
+					userObs = (p*T+1)/(T+1)
+					if(userObs > 1.0):
+						userObs = 1.0
+					userL[i].set_userObserProb(userObs)
+					if(userL[i].get_userState() > maxT):
+						userL[i].set_userState(tempDelay)	
+				else:userL[i].set_userObserProb(1.0)
+			userL[i].set_userChosenTimes(userL[i].get_userChosenTimes()+1)
+		else:
+			if(userL[i].get_userState()<0):
+				userL[i].set_userState(userL[i].get_userState() + 1)
+
+def userProbVary(userL, rand, mode):
+	pass
+
+def usercmp(element):
+	return element.get_userExpDec()
