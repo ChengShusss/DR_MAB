@@ -26,6 +26,11 @@ probV = 0.05
 powerC = 1.0
 powerV = 0.15
 
+fontdic = {'family' : 'Times New Roman',  
+        'color'  : 'black',  
+        'weight' : 'normal',  
+        'size'   : 25}
+
 meanPower = 0
 varPower = 0.0
 c_1 = c_2 = 0			#c_1 and c_2 are control parameter
@@ -61,11 +66,9 @@ def main():
 
 	fig = plt.figure(figsize=(12, 7))
 	ax1 = plt.subplot(221)
-	ax1.set_xlim(0,eventNum)
-	ax1.set_ylim(int(min(target)*0.6),int(max(target)*1.5))
+	
 	ax2 = plt.subplot(222)
-	ax2.set_xlim(0,1.0)
-	ax2.set_ylim(0,1)
+
 	ax3 = plt.subplot(223)
 	ax4 = plt.subplot(224)
 	
@@ -80,9 +83,14 @@ def main():
 		optOutN[0][eventI-1] = np.sum(optOut)
 
 		X1 = list(range(eventI))
-		ax1.scatter(X1, realDecN[0][0:eventI], s=35, marker='2', color='b')
-		ax1.scatter(X1, realDecN[1][0:eventI], s=15, marker='d', color='r')
-		ax1.plot(X1, target[0:eventI], ls='--', color='grey')
+		ax1.cla()
+		ax1.set_xlim(0,eventNum)
+		ax1.set_ylim(int(min(target)*0.6),int(max(target)*1.5))
+		ax1.set_title("Actual Reduction", fontdict=fontdic)
+		I11 = ax1.scatter(X1, realDecN[0][0:eventI], s=35, marker='2', color='r', label='Risk-Averse')
+		I12 = ax1.scatter(X1, realDecN[1][0:eventI], s=15, marker='d', color='b', label='Conventional method')
+		I13 = ax1.plot(X1, target[0:eventI], ls='--', color='grey', label='Target')
+		ax1.legend(loc='upper right',prop={'family':'Times New Roman', 'size':10})
 
 		get_allUserObs(userList, obsList)
 		X21 = []
@@ -92,6 +100,9 @@ def main():
 			Y21.append(obsList[i][1])
 			X21.append(realList[i][1])
 		ax2.cla()
+		ax2.set_xlim(0.6,1)
+		ax2.set_ylim(-0.1,1.1)
+		ax2.set_title("Knowledge of Users", fontdict=fontdic)
 		ax2.scatter(X21, Y21 , s=5, color='b')
 		ax2.plot(X22, Y22)
 		
