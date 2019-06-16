@@ -9,6 +9,7 @@ lib required: numpy, matplotlib.
 import csv
 import time
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from user import *
@@ -16,21 +17,17 @@ from MAB_method import *
 from Data_analysis import *
 from Load_simulation import *
 
-
 #global variable
 userNum = 2000			#the count of users
-eventNum = 200			#the count of demand response event
+eventNum = 400			#the count of demand response event
 optoutDelay = -5			#the wait gap when user opt-out
-tempDelay = -20			#the wait gap when user temperature rise or other situation occurs
+tempDelay = -10			#the wait gap when user temperature rise or other situation occurs
 methodNum = 2			#the count of used method
-maxTime = 60
+maxTime = 30
 probC = 0.9			#following four item are the distribution parameter of users' load
 probV = 0.1
 powerC = 1.0
 powerV = 0.15
-
-
-
 meanPower = 0
 varPower = 0.0
 c_1 = c_2 = 0			#c_1 and c_2 are control parameter
@@ -42,6 +39,9 @@ optOutN  = []
 realDecN = []
 signalN  = []
 feedBack = []
+Info = {
+		'userNum':userNum,
+		'eventNum':eventNum}
 for i in range(methodNum):
 	realDecN.append([0]*eventNum)
 	signalN.append([0]*userNum)
@@ -53,23 +53,33 @@ for i in range(userNum):
 	userList.append(user())
 	obsList.append([i,0.1])
 	realList.append([i,0.1])
-target = [300]*eventNum
+target = [400]*eventNum
 
 def main():
 	print("Program Started at:", time.asctime(time.localtime(time.time())))
 	startTime = time.process_time()
-	print(" Parameter of Initiation:\n   The count of users:", userNum, "\n   probC:", probC, "probV:", probV,
+	print(" Parameter of Initiation:\n   The count of users:", userNum,
+			"\n   probC:", probC, "probV:", probV,
 			"\n   powerC:", powerC, "powerV:", powerV)
 	userInit(userList, probC, probV, powerC, powerV)
 	meanPower,varPower = get_userInfo(userList)
 	get_allUserReal(userList, realList)
+	userIndex = []
+	userReal = []
+	for i in range(userNum): 
+		userIndex.append("user"+str(i+1))
+		userReal.append(realList[i][1])
+	with open('UserKnowledge.csv','w', newline='') as CSVFile: 
+		reducCsv=csv.writer(CSVFile)  
+		reducCsv.writerow(userIndex)
+		reducCsv.writerow(userReal)
+	with open('UserKnowledgeColor.csv','w', newline='') as CSVFile: 
+		reducCsv=csv.writer(CSVFile)  
+		reducCsv.writerow(userIndex)
 	print("   mean of Power:", meanPower, "\n   variance of Power:", varPower,'\n')
 	c_1 = 0.1*meanPower/varPower;
 	c_2 = 2.0*meanPower;
-
-	fig, ax1, ax2, ax3, ax4 = plotInit()
 	
-	#print(obsList)
 	for eventI in range(1,eventNum+1):
 		signalN[0] = riskAverse(userList, target[eventI-1], c_1, c_2, eventI)
 		signalN[1] = convenMethod(userList, target[eventI-1], meanPower)
@@ -81,57 +91,49 @@ def main():
 		optOutN[1][eventI-1] = np.sum(optOut)
 		chosenN[1][eventI-1] = np.sum(signalN[1])
 		
-		
-		DataX = []
-		DataY = []
-		X1 = list(range(eventI))
-		for i in range(3):DataX.append(X1)
-		DataY.append(realDecN[0][0:eventI])
-		DataY.append(realDecN[1][0:eventI])
-		DataY.append(target[0:eventI])
-		xlim = (0,eventNum)
-		ylim = (int(min(target)*0.4),int(max(target)*1.8))
-		figUpdata_1(ax1, DataX, DataY, xlim, ylim)
-		file.write(str(DataY)+'\n')
-		
-		X21 = []
 		Y21 = []
-		Y22 = X22 = np.linspace(0.4,1.0,50)
 		get_allUserObs(userList, obsList)
 		for i in range(len(obsList)):
 			Y21.append(obsList[i][1])
-			X21.append(realList[i][1])
 		color2 = ['b']*userNum
 		for i in range(userNum):
 			if(signalN[0][i] == 1):
-				if(optOut[i] == 1):
-					color2[i] = 'r'
-				else:
-					color2[i] = 'g'
-		ax2.cla()
-		ax2.set_xlim(0.4,1)
-		ax2.set_ylim(-0.1,1.1)
-		ax2.set_title("Knowledge of Users", fontdict=fontdic)
-		ax2.scatter(X21, Y21 , s=1, color=color2)
-		ax2.plot(X22, Y22)
+				if(optOut[i] == 1):color2[i] = 'r'
+				else:color2[i] = 'g'
 
-		ax3.cla()
-		ax3.set_xlim(0,eventNum)
-		ax3.set_ylim(0,userNum*0.4)
-		ax3.set_title("The count of user opt-out", fontdict=fontdic)
-		#ax3.scatter(X21, Y21 , s=1, color=color2)
-		ax3.plot(X1, optOutN[0][0:eventI], color='r')
-		ax3.plot(X1, optOutN[1][0:eventI], color='b')
-		ax3.plot(X1, chosenN[0][0:eventI], color='g')
-		ax3.plot(X1, chosenN[1][0:eventI], color='grey')
-		
-		plt.pause(0.001)
+		with open('UserKnowledge.csv','a', newline='') as CSVFile: 
+			reducCsv=csv.writer(CSVFile)  
+			reducCsv.writerow(Y21)
+		with open('UserKnowledgeColor.csv','a', newline='') as CSVFile: 
+			reducCsv=csv.writer(CSVFile)  
+			reducCsv.writerow(color2)
 
-	print("Finished at time {}s".format(float(time.process_time() - startTime)))
-	plt.show()
-	with open('test.csv','w', newline='') as myFile: 
-		pass
+	with open('Reduction.csv','w', newline='') as CSVFile: 
+		reducCsv=csv.writer(CSVFile)  
+		reducCsv.writerow(list(range(1, eventNum+1)))
+		reducCsv.writerow(target)
+		reducCsv.writerow(realDecN[0])
+		reducCsv.writerow(realDecN[1])
+	with open('Optout.csv','w', newline='') as CSVFile: 
+		reducCsv=csv.writer(CSVFile)  
+		reducCsv.writerow(list(range(1, eventNum+1)))
+		reducCsv.writerow(optOutN[0])
+		reducCsv.writerow(optOutN[1])
+		reducCsv.writerow(chosenN[0])
+		reducCsv.writerow(chosenN[1])
+
+	print("Finished simulation after running for {}s\n".format\
+			(float(time.process_time() - startTime)))
+	print("Started to analyze data after running for {}s".format\
+			(float(time.process_time() - startTime)))
+	reducData = pd.read_csv("Reduction.csv")
+	optData  = pd.read_csv("Optout.csv")
+	userData  = pd.read_csv("UserKnowledge.csv")
+	colorData = pd.read_csv("UserKnowledgeColor.csv", dtype=str)
+	plotAll(reducData, optData, userData, colorData, Info)
+
+	print("Program finished after running for {}s".format\
+			(float(time.process_time() - startTime)))
 	
-
 if __name__ == '__main__':
 	main()
