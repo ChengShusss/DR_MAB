@@ -6,30 +6,30 @@ Li Y, Hu Q, Li N. Learning and selecting the right customers for reliability: A 
 
 lib required: numpy, matplotlib.
 '''
+import csv
 import time
 import numpy as np
 import matplotlib.pyplot as plt
 
 from user import *
 from MAB_method import *
+from Data_analysis import *
 from Load_simulation import *
 
+
 #global variable
-userNum = 500			#the count of users
-eventNum = 400			#the count of demand response event
+userNum = 2000			#the count of users
+eventNum = 200			#the count of demand response event
 optoutDelay = -5			#the wait gap when user opt-out
 tempDelay = -20			#the wait gap when user temperature rise or other situation occurs
 methodNum = 2			#the count of used method
-maxTime = 30
-probC = 0.7			#following four item are the distribution parameter of users' load
-probV = 0.08
+maxTime = 60
+probC = 0.9			#following four item are the distribution parameter of users' load
+probV = 0.1
 powerC = 1.0
 powerV = 0.15
 
-fontdic = {'family' : 'Times New Roman',  
-        'color'  : 'black',  
-        'weight' : 'normal',  
-        'size'   : 25}
+
 
 meanPower = 0
 varPower = 0.0
@@ -37,7 +37,6 @@ c_1 = c_2 = 0			#c_1 and c_2 are control parameter
 userList = []
 obsList  = []			#if necessary, additional obslist is accessible to match methodNum
 realList = []
-#X = range(eventNum)
 chosenN  = []
 optOutN  = []
 realDecN = []
@@ -54,25 +53,21 @@ for i in range(userNum):
 	userList.append(user())
 	obsList.append([i,0.1])
 	realList.append([i,0.1])
-target = [120]*eventNum
+target = [300]*eventNum
 
 def main():
+	print("Program Started at:", time.asctime(time.localtime(time.time())))
 	startTime = time.process_time()
-	print ("Parameter of Initiation:\nThe count of users:", userNum, "\nprobC:", probC, "probV:", probV,
-			"\npowerC:", powerC, "powerV:", powerV)
+	print(" Parameter of Initiation:\n   The count of users:", userNum, "\n   probC:", probC, "probV:", probV,
+			"\n   powerC:", powerC, "powerV:", powerV)
 	userInit(userList, probC, probV, powerC, powerV)
 	meanPower,varPower = get_userInfo(userList)
 	get_allUserReal(userList, realList)
-	print("mean of Power:", meanPower, "\nvariance of Power:", varPower,'\n')
+	print("   mean of Power:", meanPower, "\n   variance of Power:", varPower,'\n')
 	c_1 = 0.1*meanPower/varPower;
 	c_2 = 2.0*meanPower;
 
-
-	fig = plt.figure(figsize=(12, 7))
-	ax1 = plt.subplot(221)
-	ax2 = plt.subplot(222)
-	ax3 = plt.subplot(223)
-	ax4 = plt.subplot(224)
+	fig, ax1, ax2, ax3, ax4 = plotInit()
 	
 	#print(obsList)
 	for eventI in range(1,eventNum+1):
@@ -87,17 +82,17 @@ def main():
 		chosenN[1][eventI-1] = np.sum(signalN[1])
 		
 		
-
+		DataX = []
+		DataY = []
 		X1 = list(range(eventI))
-		ax1.cla()
-		ax1.set_xlim(0,eventNum)
-		ax1.set_ylim(int(min(target)*0.4),int(max(target)*1.8))
-		ax1.set_title("Actual Reduction", fontdict=fontdic)
-		I11 = ax1.scatter(X1, realDecN[0][0:eventI], s=35, marker='2', color='r', label='Risk-Averse')
-		I12 = ax1.scatter(X1, realDecN[1][0:eventI], s=15, marker='d', color='b', label='Conventional method')
-		I13 = ax1.plot(X1, target[0:eventI], ls='--', color='grey', label='Target')
-		ax1.legend(loc='upper right',prop={'family':'Times New Roman', 'size':10})
-
+		for i in range(3):DataX.append(X1)
+		DataY.append(realDecN[0][0:eventI])
+		DataY.append(realDecN[1][0:eventI])
+		DataY.append(target[0:eventI])
+		xlim = (0,eventNum)
+		ylim = (int(min(target)*0.4),int(max(target)*1.8))
+		figUpdata_1(ax1, DataX, DataY, xlim, ylim)
+		file.write(str(DataY)+'\n')
 		
 		X21 = []
 		Y21 = []
@@ -134,6 +129,8 @@ def main():
 
 	print("Finished at time {}s".format(float(time.process_time() - startTime)))
 	plt.show()
+	with open('test.csv','w', newline='') as myFile: 
+		pass
 	
 
 if __name__ == '__main__':
