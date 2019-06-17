@@ -79,11 +79,11 @@ def main():
 	for i in range(userNum): 
 		userIndex.append("user"+str(i+1))
 		userReal.append(realList[i][1])
-	with open('UserKnowledge.csv','w', newline='') as CSVFile: 
+	with open(r'Data\UserKnowledge.csv','w', newline='') as CSVFile: 
 		reducCsv=csv.writer(CSVFile)  
 		reducCsv.writerow(userIndex)
 		reducCsv.writerow(userReal)
-	with open('UserKnowledgeColor.csv','w', newline='') as CSVFile: 
+	with open(r'Data\UserKnowledgeColor.csv','w', newline='') as CSVFile: 
 		reducCsv=csv.writer(CSVFile)  
 		reducCsv.writerow(userIndex)
 	
@@ -115,21 +115,21 @@ def main():
 				if(optOut[i] == 1):color2[i] = 'r'
 				else:color2[i] = 'g'
 
-		with open('UserKnowledge.csv','a', newline='') as CSVFile: 
+		with open(r'Data\UserKnowledge.csv','a', newline='') as CSVFile: 
 			reducCsv=csv.writer(CSVFile)  
 			reducCsv.writerow(Y21)
-		with open('UserKnowledgeColor.csv','a', newline='') as CSVFile: 
+		with open(r'Data\UserKnowledgeColor.csv','a', newline='') as CSVFile: 
 			reducCsv=csv.writer(CSVFile)  
 			reducCsv.writerow(color2)
 
 	#store the overall date for delayed data analysis
-	with open('Reduction.csv','w', newline='') as CSVFile: 
+	with open(r'Data\Reduction.csv','w', newline='') as CSVFile: 
 		reducCsv=csv.writer(CSVFile)
 		reducCsv.writerow(list(range(1, eventNum+1)))
 		reducCsv.writerow(target)
 		reducCsv.writerow(realDecN[0])
 		reducCsv.writerow(realDecN[1])
-	with open('Optout.csv','w', newline='') as CSVFile: 
+	with open(r'Data\Optout.csv','w', newline='') as CSVFile: 
 		reducCsv=csv.writer(CSVFile)  
 		reducCsv.writerow(list(range(1, eventNum+1)))
 		reducCsv.writerow(optOutN[0])
@@ -143,10 +143,10 @@ def main():
 			(float(time.process_time() - startTime)))
 	
 	#acquire the data of simulation and plot the figure
-	reducData = pd.read_csv("Reduction.csv")
-	optData  = pd.read_csv("Optout.csv")
-	userData  = pd.read_csv("UserKnowledge.csv")
-	colorData = pd.read_csv("UserKnowledgeColor.csv", dtype=str)
+	reducData = pd.read_csv(r'Data\Reduction.csv')
+	optData  = pd.read_csv(r'Data\Optout.csv')
+	userData  = pd.read_csv(r'Data\UserKnowledge.csv')
+	colorData = pd.read_csv(r'Data\UserKnowledgeColor.csv', dtype=str)
 	plotAll(reducData, optData, userData, colorData, Info)
 
 	print("Program finished after running for {}s".format\
