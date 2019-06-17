@@ -1,3 +1,6 @@
+#coding=UTF-8
+__author__ = 'S.CHENG'
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -27,6 +30,7 @@ def plotAll(decData, optData, userData, colorData, info):
 				[]]
 	X1 = list(range(info['eventNum']))
 	for i in range(info['eventNum']):
+		#fig of reduction
 		ax1.cla()
 		ax1.set_xlim(axisLim[0][0], axisLim[0][1])
 		ax1.set_ylim(axisLim[1][0], axisLim[1][1])
@@ -38,6 +42,7 @@ def plotAll(decData, optData, userData, colorData, info):
 		I13 = ax1.plot(X1[0:i+1], decData.iloc[0,0:i+1], ls='--', color='grey', label='Target')
 		ax1.legend(loc='upper right',prop={'family':'Times New Roman', 'size':10})
 
+		#fig of knowledge of users
 		ax2.cla()
 		ax2.set_xlim(axisLim[2][0], axisLim[2][1])
 		ax2.set_ylim(axisLim[3][0], axisLim[3][1])
@@ -46,6 +51,7 @@ def plotAll(decData, optData, userData, colorData, info):
 		ax2.scatter(userX, userData.iloc[i+1].tolist(), s=1, color=colorSet)
 		ax2.plot(X22, Y22)
 
+		#fig of the count of chosen users and opt-out users
 		ax3.cla()
 		ax3.set_xlim(axisLim[4][0], axisLim[4][1])
 		ax3.set_ylim(axisLim[5][0], axisLim[5][1])
@@ -58,24 +64,4 @@ def plotAll(decData, optData, userData, colorData, info):
 
 		plt.pause(0.001)
 
-	plt.show()
-
-def figUpdata_1(ax, dataX, dataY, plotInfo):
-	ax.cla()
-	ax.set_xlim(xlim[0], xlim[1])
-	ax.set_ylim(ylim[0], ylim[1])
-	ax.set_title("Actual Reduction", fontdict=fontdic)
-	I11 = ax.scatter(dataX[0], dataY[0], s=35, marker='2', color='r', label='Risk-Averse')
-	I12 = ax.scatter(dataX[1], dataY[1], s=15, marker='d', color='b', label='Conventional method')
-	I13 = ax.plot(dataX[2], dataY[2], ls='--', color='grey', label='Target')
-	ax.legend(loc='upper right',prop={'family':'Times New Roman', 'size':10})
-	pass
-
-def figUpdata_2(ax, dataX, dataY, color, xlim, ylim):
-	pass
-
-def figUpdata_3(ax, dataX, dataY, color, xlim, ylim):
-	pass
-
-def figUpdata_4(ax, dataX, dataY, color, xlim, ylim):
-	pass
+	plt.show()		#to retain image

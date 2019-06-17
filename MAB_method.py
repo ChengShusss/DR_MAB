@@ -1,6 +1,8 @@
 #coding=UTF-8
 __author__ = 'S.CHENG'
-
+'''
+  Provides methods according MAB framework.
+'''
 from user import *
 import numpy as np
 

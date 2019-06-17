@@ -75,11 +75,10 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 		userL[i].set_userRealProb(probDis[i])
 		userL[i].set_userPower(powerDis[i])
 		userL[i].set_userObserProb(prob_c)
-		#print(i, ":", userL[i].realProb, ",", userL[i].power)
-	#userL.sort(key=usercmp, reverse=True)
 	return userL
 	
 def get_userInfo(userL):
+	#return user information: mean power and variance of power
 	exPowerList = []
 	for i in range(0, len(userL)):
 		exPowerList.append(userL[i].get_userRealProb()*userL[i].get_userPower())
@@ -88,15 +87,17 @@ def get_userInfo(userL):
 	return evgPower, variPower
 
 def get_allUserObs(userL, ObsL):
+	#return user information: observed prob
 	for i in range(len(userL)):
 		ObsL[i][1] = userL[i].get_userObserProb()
 
 def get_allUserReal(userL, RealL):
+	#return user information: real prob
 	for i in range(len(userL)):
 		RealL[i][1] = userL[i].get_userRealProb()
 
 def userUpdata(userL, signal, feedback, optDelay, maxT, tempDelay):
-	#print(feedback)
+	#updata user information according to feedback
 	for i in range(len(userL)):
 		if(signal[i] == 1):
 			T = float(userL[i].get_userChosenTimes())
@@ -122,7 +123,5 @@ def userUpdata(userL, signal, feedback, optDelay, maxT, tempDelay):
 				userL[i].set_userState(userL[i].get_userState() + 1)
 
 def userProbVary(userL, rand, mode):
+	#for future analysis of handling with users uncertainty
 	pass
-
-def usercmp(element):
-	return element.get_userExpDec()
