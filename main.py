@@ -18,21 +18,22 @@ from Data_analysis import *
 from Load_simulation import *
 
 #global variable
-userNum = 500			#the count of users
-eventNum = 200			#the count of demand response event
+userNum = 3000			#the count of users
+eventNum = 400			#the count of demand response event
 optoutDelay = -5		#the wait gap when user opt-out
 tempDelay = -10			#the wait gap when user temperature rise or other situation occurs
 methodNum = 2			#the count of used method
 maxTime = 30
 #following four item are the distribution parameter of users' load
-probC = 0.9				#the exception of user prob
-probV = 0.1				#the variance of user prob
+probC = 0.8				#the exception of user prob
+probV = 0.08				#the variance of user prob
 powerC = 1.0			#the exception of users' load power
 powerV = 0.15			#the variance of users' load power
 meanPower = 0
 varPower = 0.0
 c_1 = c_2 = 0			#c_1 and c_2 are control parameter
-userList = []
+userList = []			#userList for MAB method
+userListC= []			#userList for conventional method
 obsList  = []			#the list of users observed prob
 realList = []			#the list of users real prob
 chosenN  = []			#the count of chosen users in each event
@@ -41,7 +42,7 @@ realDecN = []			#reduction in practice in each event
 signalN  = []			#control signal (just for temporary storage of signal in one event)
 feedBack = []			#the users' feedback(whether load reduct)
 optOut   = [0]*userNum	#the status whether users opt-out
-target = [150]*eventNum	#the target of DR
+target = [800]*eventNum	#the target of DR
 
 Info = {
 		'userNum':userNum,

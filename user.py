@@ -63,8 +63,8 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 	#in case that prob is geater than 1	
 	powerDis = np.random.randn(len(userL))*power_v + power_c
 	for i in range(0,len(userL)):
-		if(probDis[i]>(prob_c-prob_v/2)):
-			probDis[i] = np.random.randn()*prob_v/5 + prob_c
+		# if(probDis[i]>(prob_c-prob_v/2)):
+		# 	probDis[i] = np.random.randn()*prob_v/5 + prob_c
 		if(probDis[i]>1.0):
 			probDis[i] = 1.0
 			print ("100% willness occurs")
@@ -76,7 +76,11 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 			print ("0 kW load occurs")
 		userL[i].set_userRealProb(probDis[i])
 		userL[i].set_userPower(powerDis[i])
-		userL[i].set_userObserProb(prob_c)
+		obProb = probDis[i]*(0.8+0.4*np.random.random())
+		if(obProb > 1.0):
+			obProb = 1.0
+		userL[i].set_userObserProb(obProb)
+		userL[i].set_userChosenTimes(5)
 	return userL
 	
 def get_userInfo(userL):
