@@ -9,6 +9,7 @@ class user:
 	state = 0
 	power = 1
 	maxTimes = 15
+	#what happen to git 
 
 	def set_userPara(self, rP=0.0, oP = 0.0, cT=0, s=0, p=1):
 		self.realProb = rP
