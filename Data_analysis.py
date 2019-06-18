@@ -25,11 +25,13 @@ def plotAll(decData, optData, userData, colorData, info):
 				[int(min(min(target), min(decU), min(decC))*0.9),
 					 int(max(max(target), max(decU), max(decC))*1.1)],
 				[0.4,1],[-0.1,1.1],
-				[0,info['eventNum']],[0,(info['userNum'])*0.4],
+				[0,info['eventNum']],[0,(info['userNum'])*0.1],
 				[],
 				[]]
 	X1 = list(range(info['eventNum']))
-	for i in range(info['eventNum']):
+	loopL = list(range(0, info['eventNum'], int(info['eventNum']/30)))
+	loopL.append(info['eventNum'] - 1)
+	for i in loopL:
 		#fig of reduction
 		ax1.cla()
 		ax1.set_xlim(axisLim[0][0], axisLim[0][1])
