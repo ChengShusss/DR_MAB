@@ -6,6 +6,7 @@ Li Y, Hu Q, Li N. Learning and selecting the right customers for reliability: A 
 
 lib required: numpy, matplotlib, pandas
 '''
+import os
 import csv
 import time
 import numpy as np
@@ -60,8 +61,20 @@ for i in range(userNum):
 	obsList.append([i,0.1])
 	realList.append([i,0.1])
 
+def mkdir():
+ 
+	folder = os.getcwd()+"\Data"
+ 
+	if not os.path.exists(folder):                   #判断是否存在文件夹如果不存在则创建为文件夹
+		os.makedirs(folder)            #makedirs 创建文件时如果路径不存在会创建这个路径
+		print ("---  Build data folder...  ---")
+		print ("---  OK  ---")
+ 
+	else:
+		print ("---  There exists data folder!  ---")
 
 def main():
+	mkdir() 
 	print("Program Started at:", time.asctime(time.localtime(time.time())))
 	startTime = time.process_time()
 	print(" Parameter of Initiation:\n   The count of users:", userNum,
