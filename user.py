@@ -75,10 +75,11 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 			print ("0 kW load occurs")
 		userL[i].set_userRealProb(probDis[i])
 		userL[i].set_userPower(powerDis[i])
-		obProb = probDis[i]*(0.8+0.4*np.random.random())
-		if(obProb > 1.0):
-			obProb = 1.0
-		userL[i].set_userObserProb(obProb)
+		# obProb = probDis[i]*(0.8+0.4*np.random.random())
+		# if(obProb > 1.0):
+		# 	obProb = 1.0
+		# userL[i].set_userObserProb(obProb)
+		userL[i].set_userObserProb(prob_c)
 		userL[i].set_userChosenTimes(5)
 	return userL
 	
