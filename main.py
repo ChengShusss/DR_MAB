@@ -20,7 +20,7 @@ from Load_simulation import *
 
 #global variable
 userNum = 3000			#the count of users
-eventNum = 400			#the count of demand response event
+eventNum = 40			#the count of demand response event
 optoutDelay = -5		#the wait gap when user opt-out
 tempDelay = -10			#the wait gap when user temperature rise or other situation occurs
 methodNum = 2			#the count of used method
@@ -65,8 +65,8 @@ def mkdir():
  
 	folder = os.getcwd()+"\Data"
  
-	if not os.path.exists(folder):                   #判断是否存在文件夹如果不存在则创建为文件夹
-		os.makedirs(folder)            #makedirs 创建文件时如果路径不存在会创建这个路径
+	if not os.path.exists(folder):		#if folder exists
+		os.makedirs(folder)				#folder exists
 		print ("---  Build data folder...  ---")
 		print ("---  OK  ---")
  
@@ -74,7 +74,7 @@ def mkdir():
 		print ("---  There exists data folder!  ---")
 
 def main():
-	mkdir() 
+	mkdir()							# 
 	print("Program Started at:", time.asctime(time.localtime(time.time())))
 	startTime = time.process_time()
 	print(" Parameter of Initiation:\n   The count of users:", userNum,
