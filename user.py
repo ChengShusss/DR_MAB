@@ -33,6 +33,9 @@ class user:
 	def set_userPower(self, p):
 		self.power = p
 
+	def set_maxTimes(self, t):
+		self.maxTimes = t
+
 	def get_userRealProb(self):
 		return self.realProb
 
@@ -61,6 +64,7 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 	probDis = np.random.randn(len(userL))*prob_v + prob_c
 	#in case that prob is geater than 1	
 	powerDis = np.random.randn(len(userL))*power_v + power_c
+	maxTime = np.random.randn(len(userL))*3.0 + 20.0
 	for i in range(0,len(userL)):
 		# if(probDis[i]>(prob_c-prob_v/2)):
 		# 	probDis[i] = np.random.randn()*prob_v/5 + prob_c
@@ -73,8 +77,12 @@ def userInit(userL, prob_c = 0.8, prob_v=0.05, power_c = 1.0, power_v= 0.1):
 		if(powerDis[i]<0.0):
 			powerDis[i] = 0.0
 			print ("0 kW load occurs")
+		if(maxTime[i]<0.0):
+			maxTime[i] = 0.0
+			print ("0 tolerate occurs")
 		userL[i].set_userRealProb(probDis[i])
 		userL[i].set_userPower(powerDis[i])
+		userL[i].set_maxTimes(int(maxTime[i]))
 		# obProb = probDis[i]*(0.8+0.4*np.random.random())
 		# if(obProb > 1.0):
 		# 	obProb = 1.0
