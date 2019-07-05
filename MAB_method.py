@@ -48,7 +48,7 @@ def CUCBAVG(userL, target, c1, c2, k):
 
 def convenMethod(userL, target, meanPower):
 	signal = [0]*len(userL)
-	chosenUserList = np.random.choice(len(userL), int(target/meanPower*1.2))
+	chosenUserList = np.random.choice(len(userL), int(target/meanPower))
 	for i in range(len(chosenUserList)):
 		signal[chosenUserList[i]] = 1
 	return signal
